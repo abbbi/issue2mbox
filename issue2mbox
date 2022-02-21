@@ -1,0 +1,93 @@
+#!/usr/bin/env python3
+import os
+import sys
+import argparse
+import logging
+import mailbox
+from email.message import EmailMessage
+from github import Github, GithubException
+
+log_format = "[%(asctime)-15s] %(levelname)7s  %(message)s"
+logging.basicConfig(format=log_format, level=logging.INFO)
+log = logging.getLogger(__name__)
+
+
+def export(target, issues):
+    log.info("Exporting issues to [%s]", target)
+    for issue in issues:
+        mb = mailbox.mbox(f"{target}/{issue.number}.mbox")
+        mail = EmailMessage()
+        log.info("[%s]: [%s] Comments: [%s]", issue.number, issue.title, issue.comments)
+        mail["Subject"] = issue.title
+        mail["From"] = issue.user.login
+        mail["To"] = "test"
+        mail["Date"] = issue.created_at
+        mail.add_header("Message-ID", f"{issue.number}")
+        mail.set_content(issue.body)
+        mail.is_draft = False
+        mb.add(mail.as_string())
+        if issue.comments > 0:
+            comments = issue.get_comments()
+            for comment in comments:
+                cmail = EmailMessage()
+                cmail["Subject"] = f"Re: {issue.title}"
+                cmail["From"] = comment.user.login
+                cmail["Date"] = comment.created_at
+                cmail.add_header("Message-ID", f"{comment.id}")
+                cmail.is_draft = False
+                cmail.set_content(comment.body)
+                cmail.is_draft = False
+                mb.add(cmail.as_string())
+
+        mb.close()
+
+
+def main():
+    """Export"""
+    parser = argparse.ArgumentParser(description="Export github issues as mbox")
+    parser.add_argument("-r", "--repo", type=str, help="Repository", required=True)
+    parser.add_argument(
+        "-t", "--token", type=str, help="Github access token", required=True
+    )
+    parser.add_argument(
+        "-d", "--dest", type=str, help="Destination directory", required=False
+    )
+
+    args = parser.parse_args()
+
+    try:
+        g = Github(args.token)
+        user = g.get_user()
+    except GithubException as errmsg:
+        log.fatal("Cant login: %s", errmsg)
+        sys.exit(1)
+
+    try:
+        repo = user.get_repo(args.repo)
+    except GithubException as errmsg:
+        log.fatal("Cant locate repository: %s", errmsg)
+        sys.exit(1)
+
+    if args.dest:
+        target = args.dest
+    else:
+        target = f"/tmp/{args.repo}"
+
+    issues = repo.get_issues()
+
+    if issues.totalCount == 0:
+        log.error("Repository has no issues")
+        sys.exit(1)
+
+    try:
+        if not os.path.exists(target):
+            os.makedirs(target, exist_ok=True)
+    except OSError as errmsg:
+        log.fatal("Cant create target: %s", errmsg)
+        sys.exit(1)
+
+    export(target, issues)
+
+
+if __name__ == "__main__":
+    main()
