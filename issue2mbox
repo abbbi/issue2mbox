@@ -124,7 +124,10 @@ def main():
     if args.dest:
         target = args.dest
     else:
-        target = f"/tmp/{repo.name}"
+        homedir = os.path.expanduser("~")
+        if not homedir:
+            homedir = "/tmp/"
+        target = f"/{homedir}/{repo.name}"
 
     issues = repo.get_issues(state="all")
 
