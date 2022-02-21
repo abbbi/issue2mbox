@@ -53,7 +53,7 @@ def export(target, issues, mbox_type, project_owner, overwrite):
         if issue.assignee is not None:
             mailto = issue.assignee
         else:
-            mailto  = project_owner
+            mailto = project_owner
         mail["To"] = mailto
         mail["Date"] = issue.created_at
         mail.add_header("Message-ID", f"{issue.number}")
