@@ -111,12 +111,12 @@ def main():
         log.fatal("Cant login: %s", errmsg)
         sys.exit(1)
 
+    repo_name = args.repo
     try:
-        repo = args.repo
-        match = re.match(r"^(?:https://github.com/)?\w+/(.+)$", repo)
+        match = re.match(r"^(?:https://github.com/)?\w+/(.+)$", repo_name)
         if match:
-            repo = match.group(1)
-        repo = user.get_repo(repo)
+            repo_name = match.group(1)
+        repo = user.get_repo(repo_name)
     except GithubException as errmsg:
         log.fatal("Cant locate repository: %s", errmsg)
         sys.exit(1)
@@ -124,7 +124,7 @@ def main():
     if args.dest:
         target = args.dest
     else:
-        target = f"/tmp/{repo}"
+        target = f"/tmp/{repo_name}"
 
     issues = repo.get_issues(state="all")
 
