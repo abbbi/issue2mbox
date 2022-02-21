@@ -51,9 +51,10 @@ def export(target, issues, mbox_type, project_owner, overwrite):
         mail["Subject"] = issue.title
         mail["From"] = f"{issue.user.login} <{issue.user.email}>"
         if issue.assignee is not None:
-            mail["To"] = issue.assignee
+            mailto = issue.assignee
         else:
-            mail["To"] = project_owner
+            mailto  = project_owner
+        mail["To"] = mailto
         mail["Date"] = issue.created_at
         mail.add_header("Message-ID", f"{issue.number}")
         mail.set_content(issue.body)
@@ -65,6 +66,7 @@ def export(target, issues, mbox_type, project_owner, overwrite):
                 cmail = EmailMessage()
                 cmail["Subject"] = f"Re: {issue.title}"
                 cmail["From"] = f"{comment.user.login} <{comment.user.email}>"
+                cmail["To"] = mailto
                 cmail["Date"] = comment.created_at
                 cmail.add_header("Message-ID", f"{comment.id}")
                 cmail.is_draft = False
