@@ -1,4 +1,4 @@
-== issue2mbox ==
+# issue2mbox
 
 Export github issues as mbox file.
 
