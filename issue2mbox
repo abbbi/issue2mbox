@@ -25,27 +25,27 @@ def removetarget(target):
         os.remove(target)
 
 
-def get_mailbox(target, mbox_type, issue_number, overwrite):
+def get_mailbox(target, issue_number, args):
     """Mailbox or mbox?"""
-    if mbox_type == "mbox":
+    if args.mailboxtype == "mbox":
         targetfile = f"{target}/{issue_number}.mbox"
-        if overwrite is True:
+        if args.overwrite is True:
             removetarget(targetfile)
         return mailbox.mbox(f"{target}/{issue_number}.mbox")
 
     targetfile = f"{target}/{issue_number}"
-    if overwrite is True:
+    if args.overwrite is True:
         removetarget(targetfile)
     return mailbox.Maildir(f"{target}/{issue_number}")
 
 
-def export(target, issues, mbox_type, project_owner, overwrite):
+def export(target, issues, project_owner, args):
     """export issue / comment data"""
     log.info("Exporting issues to [%s]", target)
-    log.info("Mailbox type: %s", mbox_type)
+    log.info("Mailbox type: %s", args.mailboxtype)
 
     for issue in issues:
-        mb = get_mailbox(target, mbox_type, issue.number, overwrite)
+        mb = get_mailbox(target, issue.number, args)
         mail = EmailMessage()
         log.info("[%s]: [%s] Comments: [%s]", issue.number, issue.title, issue.comments)
         mail["Subject"] = issue.title
@@ -174,7 +174,7 @@ def main():
         log.warning("Overwriting target directory")
 
     owner = f"{user.name} <{user.email}>"
-    export(target, issues, args.mailboxtype, owner, args.overwrite)
+    export(target, issues, owner, args)
 
 
 if __name__ == "__main__":
