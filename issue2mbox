@@ -76,7 +76,7 @@ def export(target, issues, project_owner, args):
         mail.add_header("Message-ID", f"{issue.number}")
         if labels:
             mail.add_header("X-Labels", f"{labels}")
-        mail.set_content(issue.body)
+        mail.set_content(issue.body or "")
         mail.is_draft = False
         mb.add(mail.as_string())
         if issue.comments > 0:
