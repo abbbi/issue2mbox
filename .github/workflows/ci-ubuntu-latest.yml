@@ -1,0 +1,17 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: abbbi/github-actions-tune@v1
+    - name: Python code format test
+      run: |
+        sudo pip3 install black==22.1.0
+        black --check .
+        black --check issue2mbox
