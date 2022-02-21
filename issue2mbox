@@ -5,6 +5,7 @@ import argparse
 import logging
 import shutil
 import mailbox
+import re
 from email.message import EmailMessage
 from github import Github, GithubException
 
@@ -111,7 +112,11 @@ def main():
         sys.exit(1)
 
     try:
-        repo = user.get_repo(args.repo)
+        repo = args.repo
+        match = re.match(r"^(?:https://github.com/)?\w+/(.+)$", repo)
+        if match:
+            repo = match.group(1)
+        repo = user.get_repo(repo)
     except GithubException as errmsg:
         log.fatal("Cant locate repository: %s", errmsg)
         sys.exit(1)
@@ -119,7 +124,7 @@ def main():
     if args.dest:
         target = args.dest
     else:
-        target = f"/tmp/{args.repo}"
+        target = f"/tmp/{repo}"
 
     issues = repo.get_issues(state="all")
 
