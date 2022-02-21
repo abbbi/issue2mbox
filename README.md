@@ -1,6 +1,6 @@
 # issue2mbox
 
-Export github issues as mbox file.
+Export github issues and relaated comments to mbox or maildir ..
 
 Setup:
 
