@@ -1,6 +1,6 @@
 # issue2mbox
 
-Export github issues as mbox file.
+Export github issues and related comments to mbox or maildir ..
 
 Setup:
 
@@ -20,7 +20,7 @@ issue2mbox -r <repository> -t <token>
 ```
 
 Issues and related comments will be exported as mbox
-file, can be opened via mutt:
+file, or maildir and can be opened via preferred MUA:
 
 ```
 tree /tmp/issuelist/
@@ -29,6 +29,6 @@ tree /tmp/issuelist/
 └── 2.mbox
 ```
 
-Now read the issues using mutt:
+Likewise, with mutt:
 
 `# mutt -f /tmp/issuelist/1.mbox`
