@@ -69,10 +69,23 @@ def export(target, issues, project_owner, args):
                 cmail["To"] = mailto
                 cmail["Date"] = comment.created_at
                 cmail.add_header("Message-ID", f"{comment.id}")
-                cmail.is_draft = False
                 cmail.set_content(comment.body)
                 cmail.is_draft = False
                 mb.add(cmail.as_string())
+
+        events = issue.get_events()
+        for event in events:
+            if event.event != "closed":
+                continue
+            email = EmailMessage()
+            email["Subject"] = f"Re: {issue.title}"
+            email["From"] = f"{event.actor.login} <{event.actor.email}>"
+            email["To"] = mailto
+            email["Date"] = event.created_at
+            email.add_header("Message-ID", f"{event.id}")
+            email.is_draft = False
+            email.set_content(f"{event.actor.login} closed this issue.")
+            mb.add(email.as_string())
 
         mb.close()
 
