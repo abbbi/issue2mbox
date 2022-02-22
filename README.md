@@ -35,5 +35,5 @@ Likewise, with mutt:
 
 ## Use Cases
 
-* sync your issue history to your projects source to keep a nice history
-* use the mails to import them into other forges like sourcehut
+* sync your issue history to your projects source to keep them permanently
+* use the mbox files to migreate your issues to other forges like sourcehut
