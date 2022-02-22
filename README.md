@@ -32,3 +32,8 @@ tree /tmp/issuelist/
 Likewise, with mutt:
 
 `# mutt -f /tmp/issuelist/1.mbox`
+
+## Use Cases
+
+* sync your issue history to your projects source to keep a nice history
+* use the mails to import them into other forges like sourcehut
