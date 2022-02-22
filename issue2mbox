@@ -66,7 +66,7 @@ def export(target, issues, project_owner, args):
         mail = EmailMessage()
         log.info("[%s]: [%s] Comments: [%s]", issue.number, issue.title, issue.comments)
         mail["Subject"] = issue.title
-        mail["From"] = f"{issue.user.login} <{issue.user.email}>"
+        mail["From"] = f"{issue.user.name} ({issue.user.login}) <{issue.user.email}>"
         if issue.assignee is not None:
             mailto = issue.assignee
         else:
@@ -84,7 +84,9 @@ def export(target, issues, project_owner, args):
             for comment in comments:
                 cmail = EmailMessage()
                 cmail["Subject"] = f"Re: {issue.title}"
-                cmail["From"] = f"{comment.user.login} <{comment.user.email}>"
+                cmail[
+                    "From"
+                ] = f"{comment.user.name} ({comment.user.login}) <{comment.user.email}>"
                 cmail["To"] = mailto
                 cmail["Date"] = comment.created_at
                 cmail.add_header("Message-ID", f"{comment.id}")
