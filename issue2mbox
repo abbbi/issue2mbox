@@ -88,6 +88,7 @@ def export(target, issues, project_owner, args):
                 cmail["To"] = mailto
                 cmail["Date"] = comment.created_at
                 cmail.add_header("Message-ID", f"{comment.id}")
+                cmail.add_header("In-Reply-To", f"{issue.number}")
                 cmail.set_content(comment.body)
                 cmail.is_draft = False
                 mb.add(cmail.as_string())
@@ -102,6 +103,7 @@ def export(target, issues, project_owner, args):
             email["To"] = mailto
             email["Date"] = event.created_at
             email.add_header("Message-ID", f"{event.id}")
+            email.add_header("In-Reply-To", f"{issue.number}")
             email.is_draft = False
             email.set_content(f"{event.actor.login} closed this issue.")
             mb.add(email.as_string())
